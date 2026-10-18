@@ -1,83 +1,21 @@
-| Supported Targets | ESP32-S2 |
-| ----------------- | -------- |
+# keyboard-esp32
 
-# Matrix Keyboard Example (based on Dedicated GPIO)
+Firmware for a custom PS/2 keyboard built on the ESP32-S3. Work in progress.
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+## What it is
 
-## Overview
+A keyboard controller that scans a 5×6 key matrix and outputs PS/2 scan codes to a connected PC. The ESP32-S3 handles both the matrix scanning (using the dedicated GPIO peripheral) and PS/2 signal generation (using a hardware timer ISR).
 
-This example mainly illustrates how to drive a common matrix keyboard using the dedicated GPIO APIs, including:
+## Hardware
 
-* Manipulate the level on a group of GPIOs
-* Trigger edge interrupt
-* Read level on a group of GPIOs
+- **MCU**: ESP32-S3 (DevKitC-1 for development)
+- **Matrix**: 5 rows × 6 columns = 30 keys, interrupt-driven with debounce
+- **Output**: PS/2 (Clock + Data), scan code set 2
 
-Dedicated GPIO is designed to speed up CPU operations on one or a group of GPIOs by writing assembly codes with Espressif customized instructions (please refer TRM to get more information about these instructions).
+## Status
 
-This matrix keyboard driver is interrupt-driven, supports a configurable debounce time. GPIOs used by row and column lines are also configurable during driver installation stage.
-
-## How to use example
-
-### Hardware Required
-
-This example can run on any target that has the dedicated feature (e.g. ESP32-S2). It's not necessary for your matrix board to have pull-up resisters on row/column lines. The driver has enabled internal pull-up resister by default. A typical matrix board should look as follows:
-
-```text
-row_0   +--------+-------------------+------------------------------+-----------------+
-                 |                   |                              |
-                 |       +           |       +                      |       +
-                 |     +-+-+         |     +-+-+          ......    |     +-+-+
-  .              +-----+   +-----+   +-----+   +-----+              +-----+   +-----+
-  .                              |                   |                              |
-  .                      .       |           .       |                      .       |
-                         .       |           .       |    ......            .       |
-                         .       |           .       |                      .       |
-                         .       |           .       |                      .       |
-                                 |                   |                              |
-row_n   +--------+-------------------+------------------------------+-----------------+
-                 |               |   |               |              |               |
-                 |       +       |   |       +       |              |       +       |
-                 |     +-+-+     |   |     +-+-+     |    ......    |     +-+-+     |
-                 +-----+   +-----+   +-----+   +-----+              +-----+   +-----+
-                                 |                   |                              |
-                                 |                   |                              |
-                                 |                   |                              |
-                                 +                   +                              +
-                                col_0               col_1          ......          col_m
-```
-
-### Build and Flash
-
-Build the project and flash it to the board, then run monitor tool to view serial output:
-
-```text
-idf.py -p PORT flash monitor
-```
-
-(Replace PORT with the name of the serial port to use.)
-
-(To exit the serial monitor, type ``Ctrl-]``.)
-
-See the Getting Started Guide for full steps to configure and use ESP-IDF to build projects.
-
-## Example Output
-
-```text
-I (2883) example: press event, key code = 0002
-I (3003) example: release event, key code = 0002
-I (5053) example: press event, key code = 0001
-I (5203) example: release event, key code = 0001
-I (6413) example: press event, key code = 0000
-I (6583) example: release event, key code = 0000
-I (7963) example: press event, key code = 0003
-I (8113) example: release event, key code = 0003
-I (8773) example: press event, key code = 0103
-I (8923) example: release event, key code = 0103
-I (9543) example: press event, key code = 0203
-I (9683) example: release event, key code = 0203
-```
-
-## Troubleshooting
-
-For any technical queries, please open an [issue](https://github.com/espressif/esp-idf/issues) on GitHub. We will get back to you soon.
+- [x] Matrix keyboard component (from ESP-IDF example, adapted for ESP32-S3)
+- [ ] PS/2 transmitter component (hardware timer ISR + FreeRTOS queue)
+- [ ] Keymap (row/col → PS/2 scan codes)
+- [ ] Main application wiring it together
+- [ ] Hardware build
